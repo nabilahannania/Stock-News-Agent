@@ -8,6 +8,7 @@ A simple AI agent backend that routes natural language queries about US-listed c
 - LangGraph
 - OpenAI LLM
 - Tavily Search API
+- SerpAPI GoogleSearch
 - Docker
 
 ## Features
@@ -21,24 +22,31 @@ A simple AI agent backend that routes natural language queries about US-listed c
 ## Pipeline
 ```
 User Query
-     ↓
-understand_query (LLM extraction)
-     ↓
-router
-     ↓
-tavily search
-     ↓
-summarize
-     ↓
-structured output
+   │
+   ▼
+FastAPI Endpoint
+   │
+   ▼
+LangGraph Agent
+   │
+   ├─ Extract Company + Ticker (LLM)
+   │
+   ├─ Tool Selection (LLM reasoning)
+   │
+   └─ Conditional Router
+   │      ├── Tavily
+   │      └── SerpAPI
+   │
+   ▼
+Structured JSON Response
 ```
 
 ## Run with Docker
 1. Clone the repository
 
 ```
-git clone https://github.com/yourusername/stock-news-agent.git
-cd stock-news-agent
+git clone https://github.com/nabilahannania/Stock-News-Agent.git
+cd Stock-News-Agent
 ```
 
 2. Create the environment file
@@ -88,45 +96,45 @@ POST /query
 Request:
 ```
 {
-  "query": "Give me recent updates on Apple stock."
+  "query": "What happened with Tesla this week?"
 }
 ```
 
 Example response:
 ```
 {
-  "query": "Give me recent updates on Apple stock.",
+  "query": "What happened with Tesla this week?",
   "tool_used": "tavily",
   "result": [
     {
-      "title": "MediWound: BARDA Contract Reinstatement, Capacity Expansion, and EscharEx Pipeline Catalysts Support Long-Term Buy Thesis - TipRanks",
-      "source": "tipranks.com",
-      "date": "2026-03-06",
-      "summary": "Apple Inc. (AAPL) has received a new 'street-high' price target from Wedbush, indicating positive sentiment among analysts regarding the stock's potential. This development highlights ongoing confidence in Apple's market performance."
+      "title": "Tesla Stock Rises After Buy Upgrade. Why There’s Hope Its 2026 Slump Will Reverse. - Barron's",
+      "source": "barrons.com",
+      "date": "2026-03-04",
+      "summary": "Tesla stock experienced a rise following an upgrade from Bank of America. Despite being down approximately 13% year-to-date, the stock has gained 44% over the past year, leading to optimism about a potential reversal of its slump by 2026."
     },
     {
-      "title": "Nvidia and AMD Stock Dip as U.S. Drafts Global AI Chip Export Permits - TipRanks",
-      "source": "tipranks.com",
-      "date": "2026-03-06",
-      "summary": "Apple Inc. (AAPL) recently received a new street-high price target from Wedbush, indicating positive sentiment among analysts. The article primarily discusses the impact of U.S. regulations on AI chip exports, but does not elaborate on how this may affect Apple directly."
-    },
-    {
-      "title": "Sphere 3D Cuts Costs, Upgrades Fleet as It Prepares Merger With Cathedra Bitcoin - TipRanks",
-      "source": "tipranks.com",
-      "date": "2026-03-07",
-      "summary": "Apple Inc. (AAPL) has received a new street-high price target from Wedbush, indicating positive sentiment among analysts regarding the stock's potential. This follows a trend of favorable analyst ratings for AAPL, reflecting confidence in the company's performance and market position."
-    },
-    {
-      "title": "NVDA vs. AVGO: Why Investors Liked Broadcom’s Earnings More Than Nvidia’s - TipRanks",
-      "source": "tipranks.com",
-      "date": "2026-03-06",
-      "summary": "Apple Inc. (AAPL) recently received a new street-high price target from Wedbush, indicating positive sentiment among analysts regarding the company's future performance. This development comes amid broader market reactions to earnings reports from other tech companies, highlighting AAPL's strong position in the market."
-    },
-    {
-      "title": "Nvidia and AMD Stocks Drop after Report of New U.S. Rules Requiring Approval for AI Chip Exports - TipRanks",
+      "title": "Nvidia Stock Is Rising Again after a 2% Gain on Wednesday — What’s Driving the Rally? - TipRanks",
       "source": "tipranks.com",
       "date": "2026-03-05",
-      "summary": "Apple Inc. (AAPL) received a new street-high price target from Wedbush, indicating positive analyst sentiment towards the stock. The article primarily discusses the impact of new U.S. rules on AI chip exports affecting Nvidia and AMD, with no further details on Apple's performance or market position."
+      "summary": "Tesla, Inc. (TSLA) experienced a decline in its stock price as recent sales data from the UK highlighted a slow and inconsistent recovery in the European market. This downturn raises concerns about the company's performance in a key region."
+    },
+    {
+      "title": "Personio Emphasizes AI as Workforce Enabler, Not Replacement - TipRanks",
+      "source": "tipranks.com",
+      "date": "2026-03-05",
+      "summary": "Tesla's stock (TSLA) has experienced a decline as sales figures in the UK reveal a slow and uneven recovery in the European market. This downturn highlights challenges the company faces in regaining momentum in that region."
+    },
+    {
+      "title": "Multiverse Computing Emphasizes Diversity and Inclusion in Technology Workforce - TipRanks",
+      "source": "tipranks.com",
+      "date": "2026-03-08",
+      "summary": "Tesla, Inc. (TSLA) experienced a decline in its stock price despite announcing ambitious plans for battery technology. The news highlights the company's ongoing efforts to innovate in the electric vehicle sector, but market reactions have not been favorable."
+    },
+    {
+      "title": "Workforce Inclusion Highlighted at XDLINX Space Labs - TipRanks",
+      "source": "tipranks.com",
+      "date": "2026-03-08",
+      "summary": "Tesla, Inc. (TSLA) experienced a decline in its stock price despite unveiling ambitious plans for battery technology. The market reaction suggests that investors may be skeptical about the company's ability to execute these plans effectively."
     }
   ]
 }

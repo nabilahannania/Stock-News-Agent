@@ -8,5 +8,5 @@ r_query_news = APIRouter()
 
 @r_query_news.post("/query", response_model=QueryResponse)
 def query_news(request: QueryRequest):
-    result = run_agent(request.query)
-    return {"query": request.query, "tool_used": "tavily", "result": result}
+    result, tool_used = run_agent(request.query)
+    return {"query": request.query, "tool_used": tool_used, "result": result}
