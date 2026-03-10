@@ -1,0 +1,14 @@
+services:
+  stock-agent:
+    build:
+          context: .
+          dockerfile: Dockerfile
+    image: stock-news-agent:latest
+    container_name: stock-news-agent
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: always
